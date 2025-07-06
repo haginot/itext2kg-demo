@@ -152,7 +152,100 @@ for entity in knowledge_graph.entities:
     print(f"Entity: {entity.name} ({entity.label})")
 
 for rel in knowledge_graph.relationships:
-    print(f"Relationship: {rel.head_entity.name} --[{rel.relation}]--> {rel.tail_entity.name}")
+    print(f"Relationship: {rel.startEntity.name} --[{rel.name}]--> {rel.endEntity.name}")
+```
+
+## Neo4j Visualization
+
+This demo includes Neo4j visualization capabilities to explore the generated knowledge graphs interactively.
+
+### Neo4j Setup
+
+1. **Start Neo4j Database**:
+   ```bash
+   docker run -d \
+     --name neo4j \
+     -p 7474:7474 -p 7687:7687 \
+     -e NEO4J_AUTH=neo4j/password123 \
+     neo4j:latest
+   ```
+
+2. **Configure Environment**:
+   Add Neo4j settings to your `.env` file:
+   ```
+   NEO4J_URI=bolt://localhost:7687
+   NEO4J_USERNAME=neo4j
+   NEO4J_PASSWORD=password123
+   ```
+
+3. **Access Neo4j Browser**:
+   Open http://localhost:7474 in your web browser and login with the credentials above.
+
+### Visualization Features
+
+- **Interactive Graph Exploration**: Navigate through entities and relationships
+- **Cypher Query Interface**: Run custom queries to analyze the knowledge graph
+- **Visual Graph Layout**: Automatic layout algorithms for optimal visualization
+- **Entity Filtering**: Filter by entity types and relationship types
+
+### Sample Cypher Queries
+
+```cypher
+// View all nodes and relationships
+MATCH (n)-[r]->(m) RETURN n, r, m LIMIT 100
+
+// Count entities by type
+MATCH (n) RETURN labels(n) as EntityType, count(n) as Count ORDER BY Count DESC
+
+// Find specific entities
+MATCH (n) WHERE n.name CONTAINS "Artificial Intelligence" RETURN n
+
+// Explore entity connections
+MATCH (n)-[r]-(m) WHERE n.name CONTAINS "Healthcare" RETURN n, r, m
+```
+
+### Usage Examples
+
+#### Basic Usage with Neo4j
+
+```python
+from demo import main
+
+# Run the complete demo with Neo4j visualization
+main()
+```
+
+#### Neo4j Visualization and Reporting
+
+```python
+from neo4j_visualization import main as run_visualization
+
+# Run demo and generate comprehensive report
+run_visualization()
+```
+
+#### Advanced Usage with Neo4j
+
+```python
+from demo import setup_openai_models, build_knowledge_graph, load_sample_text, setup_neo4j_connection, visualize_in_neo4j
+
+# Setup models and Neo4j
+llm_model, embeddings_model = setup_openai_models()
+graph_integrator = setup_neo4j_connection()
+
+# Load and process custom text
+text = load_sample_text("your_file.txt")
+kg = build_knowledge_graph(text, llm_model, embeddings_model)
+
+# Visualize in Neo4j
+visualize_in_neo4j(kg, graph_integrator, "Custom Text")
+
+# Access entities and relationships
+for entity in kg.entities:
+    print(f"Entity: {entity.name} ({entity.label})")
+
+for rel in kg.relationships:
+    print(f"Relationship: {rel.startEntity.name} --[{rel.name}]--> {rel.endEntity.name}")
 ```
 
 ### Document Distillation
@@ -205,9 +298,13 @@ See the [LangChain documentation](https://python.langchain.com/docs/integrations
 ### Common Issues
 
 1. **API Key Errors**: Ensure your API keys are correctly set in the `.env` file
-2. **Rate Limiting**: The demo includes retry logic, but you may need to adjust `sleep_time` for high-volume processing
-3. **Memory Issues**: For large texts, consider splitting them into smaller chunks
-4. **Empty Results**: Check that your text contains meaningful content for entity extraction
+2. **Neo4j Connection Issues**: 
+   - Ensure Neo4j is running: `docker ps | grep neo4j`
+   - Check credentials match your `.env` file
+   - Verify ports 7474 and 7687 are accessible
+3. **Rate Limiting**: The demo includes retry logic, but you may need to adjust `sleep_time` for high-volume processing
+4. **Memory Issues**: For large texts, consider splitting them into smaller chunks
+5. **Empty Results**: Check that your text contains meaningful content for entity extraction
 
 ### Dependencies
 

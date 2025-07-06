@@ -137,7 +137,7 @@ def display_knowledge_graph_summary(kg):
     print(f"\nRelationships ({len(kg.relationships)}):")
     print("-" * 30)
     for i, rel in enumerate(kg.relationships[:10], 1):
-        print(f"{i:2d}. {rel.head_entity.name} --[{rel.relation}]--> {rel.tail_entity.name}")
+        print(f"{i:2d}. {rel.startEntity.name} --[{rel.name}]--> {rel.endEntity.name}")
     if len(kg.relationships) > 10:
         print(f"    ... and {len(kg.relationships) - 10} more relationships")
     
@@ -161,14 +161,55 @@ def save_knowledge_graph(kg, filename: str):
         f.write(f"\nRELATIONSHIPS ({len(kg.relationships)}):\n")
         f.write("-" * 30 + "\n")
         for rel in kg.relationships:
-            f.write(f"- {rel.head_entity.name} --[{rel.relation}]--> {rel.tail_entity.name}\n")
+            f.write(f"- {rel.startEntity.name} --[{rel.name}]--> {rel.endEntity.name}\n")
     
     print(f"[INFO] Knowledge graph saved to: {filepath}")
 
+def setup_neo4j_connection():
+    """Setup Neo4j GraphIntegrator using environment variables."""
+    uri = os.getenv("NEO4J_URI", "bolt://localhost:7687")
+    username = os.getenv("NEO4J_USERNAME", "neo4j")
+    password = os.getenv("NEO4J_PASSWORD", "password123")
+    
+    try:
+        graph_integrator = GraphIntegrator(uri=uri, username=username, password=password)
+        print(f"[INFO] Connected to Neo4j at {uri}")
+        return graph_integrator
+    except Exception as e:
+        print(f"[WARNING] Failed to connect to Neo4j: {e}")
+        print(f"[INFO] Make sure Neo4j is running and credentials are correct")
+        return None
+
+def visualize_in_neo4j(kg, graph_integrator, description):
+    """Visualize knowledge graph in Neo4j database."""
+    if not graph_integrator:
+        print(f"[WARNING] Skipping Neo4j visualization for {description} - no connection")
+        return False
+    
+    try:
+        print(f"[INFO] Visualizing {description} in Neo4j...")
+        graph_integrator.visualize_graph(knowledge_graph=kg)
+        print(f"[INFO] Successfully visualized {description} in Neo4j")
+        return True
+    except Exception as e:
+        print(f"[ERROR] Failed to visualize {description} in Neo4j: {e}")
+        return False
+
+def clear_neo4j_database(graph_integrator):
+    """Clear all nodes and relationships from Neo4j database."""
+    if not graph_integrator:
+        return
+    
+    try:
+        graph_integrator.run_query("MATCH (n) DETACH DELETE n")
+        print("[INFO] Cleared Neo4j database")
+    except Exception as e:
+        print(f"[WARNING] Failed to clear Neo4j database: {e}")
+
 def main():
     """Main demonstration function."""
-    print("iText2KG Knowledge Graph Construction Demo")
-    print("=" * 50)
+    print("iText2KG Knowledge Graph Construction Demo with Neo4j Visualization")
+    print("=" * 70)
     
     try:
         print("[INFO] Setting up language models...")
@@ -181,10 +222,18 @@ def main():
         else:
             raise ValueError("No API key found. Please set OPENAI_API_KEY or MISTRAL_API_KEY in your .env file")
         
+        print("[INFO] Setting up Neo4j connection...")
+        graph_integrator = setup_neo4j_connection()
+        
+        if graph_integrator:
+            clear_neo4j_database(graph_integrator)
+        
         sample_files = [
             ("scientific_article.txt", "Scientific Article"),
             ("company_profile.txt", "Company Profile")
         ]
+        
+        all_knowledge_graphs = []
         
         for filename, description in sample_files:
             print(f"\n[INFO] Processing {description}...")
@@ -197,6 +246,9 @@ def main():
                 output_filename = f"kg_{filename.replace('.txt', '.txt')}"
                 save_knowledge_graph(kg, output_filename)
                 
+                visualize_in_neo4j(kg, graph_integrator, description)
+                all_knowledge_graphs.append((kg, description, filename))
+                
             except FileNotFoundError as e:
                 print(f"[ERROR] {e}")
             except Exception as e:
@@ -204,10 +256,15 @@ def main():
         
         print(f"\n[INFO] Demo completed successfully!")
         print(f"[INFO] Check the 'output' directory for exported knowledge graphs")
+        if graph_integrator:
+            print(f"[INFO] Open http://localhost:7474 to view Neo4j visualizations")
+        
+        return all_knowledge_graphs, graph_integrator
         
     except Exception as e:
         print(f"[ERROR] Demo failed: {e}")
         print(f"[INFO] Please check your API keys and dependencies")
+        return [], None
 
 if __name__ == "__main__":
     main()

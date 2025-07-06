@@ -1,2 +1,3 @@
 itext2kg
 python-dotenv
+langchain-openai
