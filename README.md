@@ -160,10 +160,10 @@ for rel in knowledge_graph.relationships:
 For better results with complex documents, use the DocumentDistiller:
 
 ```python
-from itext2kg import DocumentDistiller
+from itext2kg import DocumentsDistiller
 from itext2kg.utils import Article
 
-document_distiller = DocumentDistiller(llm_model=llm_model)
+document_distiller = DocumentsDistiller(llm_model=llm_model)
 
 IE_query = '''
 # DIRECTIVES : 

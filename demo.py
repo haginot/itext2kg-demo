@@ -1,7 +1,7 @@
 import os
 from typing import List, Optional
 from dotenv import load_dotenv
-from itext2kg import iText2KG, DocumentDistiller
+from itext2kg import iText2KG, DocumentsDistiller
 from itext2kg.utils import Article
 from itext2kg.graph_integration import GraphIntegrator
 
@@ -71,8 +71,8 @@ def load_sample_text(filename: str) -> str:
 def create_semantic_blocks(text: str, use_distiller: bool = False, llm_model=None) -> List[str]:
     """Create semantic blocks from text, optionally using DocumentDistiller."""
     if use_distiller and llm_model:
-        print("[INFO] Using DocumentDistiller to create semantic blocks...")
-        document_distiller = DocumentDistiller(llm_model=llm_model)
+        print("[INFO] Using DocumentsDistiller to create semantic blocks...")
+        document_distiller = DocumentsDistiller(llm_model=llm_model)
         
         IE_query = '''
         - Act like an experienced information extractor. 
@@ -92,7 +92,7 @@ def create_semantic_blocks(text: str, use_distiller: bool = False, llm_model=Non
                              for key, value in distilled_doc.items() if value]
             return semantic_blocks
         except Exception as e:
-            print(f"[WARNING] DocumentDistiller failed: {e}")
+            print(f"[WARNING] DocumentsDistiller failed: {e}")
             print("[INFO] Falling back to simple text chunking...")
     
     paragraphs = [p.strip() for p in text.split('\n\n') if p.strip()]
