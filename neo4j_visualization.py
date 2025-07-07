@@ -14,13 +14,13 @@ def capture_neo4j_screenshots():
     
     screenshot_info = [
         {
-            "filename": "neo4j_scientific_article.png",
-            "description": "Knowledge graph visualization of scientific article about AI in healthcare",
+            "filename": "neo4j_hr_software.png",
+            "description": "Knowledge graph visualization of HR software comparison (HRMOS vs SmartHR)",
             "timestamp": datetime.now().isoformat()
         },
         {
-            "filename": "neo4j_company_profile.png", 
-            "description": "Knowledge graph visualization of TechNova Solutions company profile",
+            "filename": "neo4j_business_software.png", 
+            "description": "Knowledge graph visualization of business software ecosystem (ジョブカン and freee)",
             "timestamp": datetime.now().isoformat()
         },
         {

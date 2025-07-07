@@ -77,10 +77,10 @@ This will:
 
 ### Sample Data
 
-The demo includes two sample texts:
+The demo includes two sample documents to demonstrate knowledge graph construction:
 
-- **Scientific Article** (`sample_data/scientific_article.txt`): An article about AI in healthcare
-- **Company Profile** (`sample_data/company_profile.txt`): A business description of a tech company
+- **HR Software Comparison** (`sample_data/hr_software_comparison.txt`): Comprehensive analysis of HRMOS and SmartHR platforms
+- **Business Software Ecosystem** (`sample_data/business_software_ecosystem.txt`): Overview of ジョブカン and freee business solutions
 
 ### Output
 

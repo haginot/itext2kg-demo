@@ -15,7 +15,7 @@ def test_sample_data_processing():
     try:
         from demo import load_sample_text, create_semantic_blocks
         
-        for filename in ["scientific_article.txt", "company_profile.txt"]:
+        for filename in ["hr_software_comparison.txt", "business_software_ecosystem.txt"]:
             try:
                 text = load_sample_text(filename)
                 print(f"✓ Loaded {filename}: {len(text)} characters")

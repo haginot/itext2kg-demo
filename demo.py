@@ -229,8 +229,8 @@ def main():
             clear_neo4j_database(graph_integrator)
         
         sample_files = [
-            ("scientific_article.txt", "Scientific Article"),
-            ("company_profile.txt", "Company Profile")
+            ("hr_software_comparison.txt", "HR Software Comparison"),
+            ("business_software_ecosystem.txt", "Business Software Ecosystem")
         ]
         
         all_knowledge_graphs = []

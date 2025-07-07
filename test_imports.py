@@ -40,8 +40,8 @@ def test_sample_data():
     print("\nTesting sample data files...")
     
     sample_files = [
-        "sample_data/scientific_article.txt",
-        "sample_data/company_profile.txt"
+        "sample_data/hr_software_comparison.txt",
+        "sample_data/business_software_ecosystem.txt"
     ]
     
     for filepath in sample_files:
